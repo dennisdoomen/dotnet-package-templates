@@ -1,0 +1,29 @@
+{
+    "$schema": "http://json.schemastore.org/template",
+    "author": "Dennis Doomen",
+    "classifications": [ "NuGet Package", "Class Library" ],
+    "tags": {
+      "language": "C#"
+    },
+    "identity": "Binary.Package.Template",
+    "name": "NuGet.Package.Template",
+    "shortName": "binary-nuget-package",
+    "sourceName": "MyPackage",
+    "symbols": {
+      "skipRestore": {
+        "type": "parameter",
+        "datatype": "bool",
+        "description": "If specified, skips the automatic restore of the project on create.",
+        "defaultValue": "false"
+      }
+    },
+    "sources": [
+      {
+        "modifiers": [
+          {
+            "exclude": [ "src/.idea/**", ".template_config/**" ]
+          }
+        ]
+      }
+    ]
+  }

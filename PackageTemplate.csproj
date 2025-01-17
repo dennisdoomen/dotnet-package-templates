@@ -1,0 +1,35 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net7.0</TargetFramework>
+    <IncludeContentInPack>true</IncludeContentInPack>
+    <IncludeBuildOutput>false</IncludeBuildOutput>
+    <ContentTargetFolders>content</ContentTargetFolders>
+    <EnableDefaultItems>false</EnableDefaultItems>
+    <NoDefaultExcludes>true</NoDefaultExcludes>
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    <PackageOutputPath>Artifacts</PackageOutputPath>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Content Include="src\**\*" Exclude="**\bin\**\*;**\obj\**\*" />
+    <Compile Remove="**\*" />
+    <None Include="README.md" Pack="true" PackagePath="\"/>
+  </ItemGroup>
+
+  <PropertyGroup>
+    <PackageType>Template</PackageType>
+    <PackageId>DotNetPackageTemplates</PackageId>
+    <Title>.NET Package Template</Title>
+    <Company>Dennis Doomen</Company>
+    <Authors>Dennis Doomen</Authors>
+    <Copyright>Dennis Doomen 2025</Copyright>
+    <Description>A "dotnet new" template for a .NET package with all the necessary components to publish it on NuGet.</Description>
+    <PackageTags>c#;.net;template;nuget</PackageTags>
+    <PackageCopyright>Dennis Doomen 2025</PackageCopyright>
+    <PackageProjectUrl>https://github.com/dennisdoomen/dotnet-package-template</PackageProjectUrl>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <RepositoryType>git</RepositoryType>
+    <RepositoryUrl>https://github.com/dennisdoomen/dotnet-package-template</RepositoryUrl>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+  </PropertyGroup>
+</Project>
