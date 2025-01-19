@@ -10,7 +10,7 @@
 
 [![](https://img.shields.io/github/actions/workflow/status/dennisdoomen/dotnet-package-templates/build.yml?branch=main)](https://github.com/dennisdoomen/dotnet-package-templates/actions?query=branch%3amain)
 [![](https://img.shields.io/github/release/dennisdoomen/dotnet-package-templates.svg?label=latest%20release&color=007edf)](https://github.com/dennisdoomen/dotnet-package-templates/releases/latest)
-[![](https://img.shields.io/nuget/dt/dotnet-package-templates.svg?label=downloads&color=007edf&logo=nuget)](https://www.nuget.org/packages/dotnet-package-templates)
+[![](https://img.shields.io/nuget/dt/DotNetLibraryPackageTemplates.svg?label=downloads&color=007edf&logo=nuget)](https://www.nuget.org/packages/DotNetLibraryPackageTemplates)
 ![GitHub Repo stars](https://img.shields.io/github/stars/dennisdoomen/dotnet-package-templates?style=flat)
 [![GitHub contributors](https://img.shields.io/github/contributors/dennisdoomen/dotnet-package-templates)](https://github.com/dennisdoomen/dotnet-package-templates/graphs/contributors)
 [![GitHub last commit](https://img.shields.io/github/last-commit/dennisdoomen/dotnet-package-templates)](https://github.com/dennisdoomen/dotnet-package-templates)
@@ -46,7 +46,6 @@ It includes:
 * An extensive read-me
 * Automatic versioning using [GitVersion](https://gitversion.net/) and tagging
 * Contribution guidelines
-* Bug report templates
 * Customized release notes templates for GitHub connected to pull requests labels.
 * A test project using [xUnit](https://xunit.net/) and [Fluent Assertions 7](https://fluentassertions.com/)
 * Validation of the public API of the library against snapshots using [Verify](https://github.com/VerifyTests/Verify)
@@ -57,7 +56,7 @@ I like to build my software systems in a nicely broken down set of libraries tha
 
 This is the result of years of experience in building in-house and open-source libraries that are used by thousands of developers around the world. I hope it's a great starting point for building your own libraries.
 
-**Tip** You can use this as a starting point for a [GitHub Template Repository](https://docs.github.com/en/repositories/creating-and-managing-repositories/creating-a-template-repository), fork the repository for your own company, or use it as an organization template in Azure DevOps.
+**Tip** You can also use this as a starting point for a [GitHub Template Repository](https://docs.github.com/en/repositories/creating-and-managing-repositories/creating-a-template-repository), fork and adapt the repository for your own company, or use it as an organization template in Azure DevOps.
 
 ### Who created this?
 My name is Dennis Doomen and I'm a Microsoft MVP and Principal Consultant at [Aviva Solutions](https://avivasolutions.nl/) with 28 years of experience under my belt. As a software architect and/or lead developer, I specialize in designing full-stack enterprise solutions based on .NET as well as providing coaching on all aspects of designing, building, deploying and maintaining software systems. I'm the author of several open-source projects such as [Fluent Assertions](https://www.fluentassertions.com), [Reflectify](https://github.com/dennisdoomen/reflectify), [Liquid Projections](https://www.liquidprojections.net), and I've been maintaining [coding guidelines for C#](https://www.csharpcodingguidelines.com) since 2001.
@@ -66,20 +65,39 @@ Contact me through [Email](mailto:dennis.doomen@avivasolutions.nl), [Bluesky](ht
 
 ## Download
 
-This library is available as [a NuGet package](https://www.nuget.org/packages/dotet) on https://nuget.org. To install it, use the following command-line:
+This repository is available as [a NuGet package](https://www.nuget.org/packages/DotNetLibraryPackageTemplates) on https://nuget.org. To install it, use the following command-line:
 
 `dotnet new install DotNetLibraryPackageTemplates`
 
 ## How do I use it?
 
+### Generating the library skeleton
+
 1. Create a new directory for your library initialized with Git
-2. Run `dotnet new class-library-package-solution -name MyAwesomeLibrary`
-3. Make the necessary changes to the generated code
+2. Run `dotnet new class-library-package-solution -name TheNameOfYourAwesomeLibrary`
+3. Make the necessary changes to the generated code (see next section)
 4. Commit the changes to your repository into a new commit
 5. Run `build.ps1` to build the code, run the tests, and package the library into a NuGet package in the `Artifacts` directory.
 
-todo: what to customize after creating the project
-todo: silent formatting in Rider and ReSharper
+### What to do after that
+
+The template makes a lot of assumptions, so after generating the project, there's a couple of things you can tweak.
+
+* Update the `README.md` with information about your library
+* Review the guidelines in `CONTRIBUTION.md` to see if it aligns with how you want to handle contributions
+* Adjust the .NET frameworks this library should target
+* Adjust the namespace 
+* Set-up labels in GitHub matching those in the `release.yml` so you can label pull requests accordingly
+* Alter the coverage service that is being used.
+* Determine if you want to use API verification against snapshots
+* Study the Nuke `build.cs` file or invoking it through `build.ps1 -plan` to see how it works
+* See if all dependencies are up-to-date
+* Adjust the `funding.yml` to allow people to sponsor your project
+
+### About API verification
+
+The `ApiVerificationTests` will generate a `.txt` file containing a representation (per target framework) of the public API of your library. It's a nice technique to prevent accidentally introducing breaking changes. So, whenever the structure of your API changes compared to the snapshot stored in the `ApprovedApi` folder, the test will fail. 
+You can then use `AcceptApiChanges.ps1` to update the snapshots and make the test succeed again.
 
 ## Building
 
@@ -140,4 +158,4 @@ This library wouldn't have been possible without the following tools, packages a
 * [C# Coding Guidelines](https://csharpcodingguidelines.com/) - Forkable coding guidelines for all C# versions
 
 ## License
-This project is licensed under the MIT License - see the [LICENSE(LICENSE) file for details.
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
