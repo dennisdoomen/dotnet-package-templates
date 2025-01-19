@@ -39,7 +39,7 @@ A bunch of `dotnet new` templates to quickly get you started building high-quali
 It includes:
 * Multi-targeting to cover as many .NET frameworks as possible
 * Code coverage using [Coverlet](https://github.com/coverlet-coverage/coverlet) and [Coveralls.io](https://coveralls.io/)
-* Static code analysis using Roslyn analyzers [StyleCopAnalyzers](https://github.com/DotNetAnalyzers/StyleCopAnalyzers), [Roslynator](https://github.com/dotnet/roslynator), [CSharpGuidelinesAnalyzer] and [Meziantou].
+* Static code analysis using Roslyn analyzers [StyleCopAnalyzers](https://github.com/DotNetAnalyzers/StyleCopAnalyzers), [Roslynator](https://github.com/dotnet/roslynator), [CSharpGuidelinesAnalyzer](https://github.com/bkoelman/CSharpGuidelinesAnalyzer) and [Meziantou](https://github.com/meziantou/Meziantou.Framework).
 * Auto-formatting using `.editorconfig` and settings honored by [JetBrains Rider](https://www.jetbrains.com/rider/) and [ReSharper](https://www.jetbrains.com/resharper/)
 * A [Nuke](https://nuke.build/) C# build script that you can run locally as well as in your CI/CD pipeline
 * A GitHub Actions workflow that builds, tests, packages and publishes your library
@@ -69,11 +69,15 @@ Contact me through [Email](mailto:dennis.doomen@avivasolutions.nl), [Bluesky](ht
 
 This library is available as [a NuGet package](https://www.nuget.org/packages/dotet) on https://nuget.org. To install it, use the following command-line:
 
-`dotnet new -i DotNetPackageTemplates`
+`dotnet new install DotNetLibraryPackageTemplates`
 
 ## How do I use it?
 
-`dotnet new Binary.Package.Template --name YourLibraryName`
+1. Create a new directory for your library initialized with Git
+2. Run `dotnet new class-library-package-solution -name MyAwesomeLibrary`
+3. Make the necessary changes to the generated code
+4. Commit the changes to your repository into a new commit
+5. Run `build.ps1` to build the code, run the tests, and package the library into a NuGet package in the `Artifacts` directory.
 
 todo: what to customize after creating the project
 todo: silent formatting in Rider and ReSharper

@@ -1,22 +1,15 @@
 {
     "$schema": "http://json.schemastore.org/template",
     "author": "Dennis Doomen",
-    "classifications": [ "NuGet Package", "Class Library" ],
+    "classifications": [ "NuGet Package", "Class Library", "Solution Template" ],
     "tags": {
       "language": "C#"
     },
-    "identity": "Binary.Package.Template",
-    "name": "NuGet.Package.Template",
-    "shortName": "binary-nuget-package",
+    "identity": "DennisDoomen.BinaryLibraryPackage.Template",
+    "name": "Class Library NuGet Package Solution",
+    "description": "NuGet-published multi-targeting library with all the bells and whistles",
+    "shortName": "class-library-package-solution",
     "sourceName": "MyPackage",
-    "symbols": {
-      "skipRestore": {
-        "type": "parameter",
-        "datatype": "bool",
-        "description": "If specified, skips the automatic restore of the project on create.",
-        "defaultValue": "false"
-      }
-    },
     "sources": [
       {
         "modifiers": [

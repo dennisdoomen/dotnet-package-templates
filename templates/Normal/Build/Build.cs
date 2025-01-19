@@ -36,10 +36,10 @@ class Build : NukeBuild
     [Secret]
     readonly string NuGetApiKey;
 
-    [Solution(GenerateProjects = true)]
+    [Solution]
     readonly Solution Solution;
 
-    [GitVersion(Framework = "net6.0", NoFetch = true)]
+    [GitVersion(Framework = "net8.0", NoFetch = true, NoCache = true)]
     readonly GitVersion GitVersion;
 
     AbsolutePath ArtifactsDirectory => RootDirectory / "Artifacts";
@@ -99,6 +99,7 @@ class Build : NukeBuild
         .Executes(() =>
         {
             TestResultsDirectory.CreateOrCleanDirectory();
+            var project = Solution.GetProject("MyPackage.Specs");
 
             DotNetTest(s => s
                 // We run tests in debug mode so that Fluent Assertions can show the names of variables
@@ -107,8 +108,8 @@ class Build : NukeBuild
                 .SetProcessEnvironmentVariable("DOTNET_CLI_UI_LANGUAGE", "en-US")
                 .SetDataCollector("XPlat Code Coverage")
                 .SetResultsDirectory(TestResultsDirectory)
-                .SetProjectFile(Solution.MyPackage_Specs)
-                .CombineWith(Solution.MyPackage_Specs.GetTargetFrameworks(),
+                .SetProjectFile(project)
+                .CombineWith(project.GetTargetFrameworks(),
                     (ss, framework) => ss
                         .SetFramework(framework)
                         .AddLoggers($"trx;LogFileName={framework}.trx")
@@ -119,12 +120,14 @@ class Build : NukeBuild
         .DependsOn(Compile)
         .Executes(() =>
         {
+            var project = Solution.GetProject("MyPackage.ApiVerificationTests");
+
             DotNetTest(s => s
                 .SetConfiguration(Configuration == Configuration.Debug ? "Debug" : "Release")
                 .SetProcessEnvironmentVariable("DOTNET_CLI_UI_LANGUAGE", "en-US")
                 .SetResultsDirectory(TestResultsDirectory)
-                .SetProjectFile(Solution.MyPackage_ApiVerificationTests)
-                .AddLoggers($"trx;LogFileName={Solution.MyPackage_ApiVerificationTests.Name}.trx"));
+                .SetProjectFile(project)
+                .AddLoggers($"trx;LogFileName={project!.Name}.trx"));
         });
 
     Target CodeCoverage => _ => _
@@ -152,7 +155,7 @@ class Build : NukeBuild
                     .AddPair("Packed version", semVer)));
 
             DotNetPack(s => s
-                .SetProject(Solution.MyPackage)
+                .SetProject(Solution.GetProject("MyPackage"))
                 .SetOutputDirectory(ArtifactsDirectory)
                 .SetConfiguration(Configuration == Configuration.Debug ? "Debug" : "Release")
                 .EnableNoBuild()

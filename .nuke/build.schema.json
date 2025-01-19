@@ -25,13 +25,11 @@
       "type": "string",
       "enum": [
         "CalculateNugetVersion",
-        "CodeCoverage",
         "Compile",
         "Default",
         "Pack",
         "Push",
-        "Restore",
-        "RunTests"
+        "TestTemplateBuild"
       ]
     },
     "Verbosity": {
