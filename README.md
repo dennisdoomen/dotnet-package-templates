@@ -48,7 +48,6 @@ It includes:
 * Contribution guidelines
 * Bug report templates
 * Customized release notes templates for GitHub connected to pull requests labels.
-* Support for content-only NuGet packages
 * A test project using [xUnit](https://xunit.net/) and [Fluent Assertions 7](https://fluentassertions.com/)
 * Validation of the public API of the library against snapshots using [Verify](https://github.com/VerifyTests/Verify)
 
