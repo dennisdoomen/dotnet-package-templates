@@ -74,10 +74,13 @@ This repository is available as [a NuGet package](https://www.nuget.org/packages
 ### Generating the library skeleton
 
 1. Create a new directory for your library initialized with Git
-2. Run `dotnet new class-library-package-solution -name TheNameOfYourAwesomeLibrary`
-3. Make the necessary changes to the generated code (see next section)
-4. Commit the changes to your repository into a new commit
-5. Run `build.ps1` to build the code, run the tests, and package the library into a NuGet package in the `Artifacts` directory.
+2. Run the following command
+   
+    `dotnet new class-library-package-solution --name TheNameOfYourAwesomeLibrary`
+
+4. Make the necessary changes to the generated code (see next section)
+5. Commit the changes to your repository into a new commit
+6. Run `build.ps1` to build the code, run the tests, and package the library into a NuGet package in the `Artifacts` directory.
 
 ### What to do after that
 
