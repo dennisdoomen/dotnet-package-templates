@@ -13,7 +13,7 @@
     </PropertyGroup>
 
   <PropertyGroup Label="Package info">
-    <Authors>You're name</Authors>
+    <Authors>Your name</Authors>
     <PackageDescription>
       A nice description of your package as you want to see it on NuGet.
     </PackageDescription>
