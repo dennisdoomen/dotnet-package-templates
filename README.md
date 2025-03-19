@@ -34,10 +34,11 @@
 
 ### What's this?
 
-A bunch of `dotnet new` templates to quickly get you started building high-quality libraries including everything you need to publish it on NuGet or make it available as open-source.
+A bunch of `dotnet new` templates to quickly get you started building high-quality binary or source-only libraries including everything you need to publish it on NuGet or make it available as open-source.
 
 It includes:
 * Multi-targeting to cover as many .NET frameworks as possible
+* Can create projects for binary or source-only packages
 * Code coverage using [Coverlet](https://github.com/coverlet-coverage/coverlet) and [Coveralls.io](https://coveralls.io/)
 * Static code analysis using Roslyn analyzers [StyleCopAnalyzers](https://github.com/DotNetAnalyzers/StyleCopAnalyzers), [Roslynator](https://github.com/dotnet/roslynator), [CSharpGuidelinesAnalyzer](https://github.com/bkoelman/CSharpGuidelinesAnalyzer) and [Meziantou](https://github.com/meziantou/Meziantou.Framework).
 * Auto-formatting using `.editorconfig` and settings honored by [JetBrains Rider](https://www.jetbrains.com/rider/) and [ReSharper](https://www.jetbrains.com/resharper/)
@@ -52,7 +53,7 @@ It includes:
 
 ### What's so special about that?
 
-I like to build my software systems in a nicely broken down set of libraries that are easy to maintain, test and deploy based on the [Principles Of Successful Package Management](https://www.dennisdoomen.com/2016/10/principles-for-successful-package.html). But every time I or the teams I work with need to start a new library or reusable component, we have to scramble so much from other projects, I felt this good fill the gap.
+I like to build my software systems in a nicely broken down set of libraries that are easy to maintain, test and deploy based on the [Principles Of Successful Package Management](https://www.dennisdoomen.com/2016/10/principles-for-successful-package.html). However, every time I or the teams I work with need to start a new library or reusable component, we have to piece together so much from other projects that I felt this would fill the gap.
 
 This is the result of years of experience in building in-house and open-source libraries that are used by thousands of developers around the world. I hope it's a great starting point for building your own libraries.
 
