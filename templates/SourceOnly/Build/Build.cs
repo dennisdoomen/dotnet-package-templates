@@ -7,11 +7,9 @@ using Nuke.Common.ProjectModel;
 using Nuke.Common.Tooling;
 using Nuke.Common.Tools.DotNet;
 using Nuke.Common.Tools.GitVersion;
-using Nuke.Common.Tools.PowerShell;
 using Nuke.Common.Tools.ReportGenerator;
 using Nuke.Common.Utilities;
 using Nuke.Common.Utilities.Collections;
-using Nuke.Components;
 using static Nuke.Common.Tools.DotNet.DotNetTasks;
 using static Nuke.Common.Tools.ReportGenerator.ReportGeneratorTasks;
 using static Serilog.Log;
@@ -28,23 +26,25 @@ class Build : NukeBuild
     [Parameter("Configuration to build - Default is 'Debug' (local) or 'Release' (server)")]
     readonly Configuration Configuration = IsLocalBuild ? Configuration.Debug : Configuration.Release;
 
-    [Parameter("The key to push to Nuget")]
-    [Secret]
-    readonly string NuGetApiKey;
-
-    [Solution(GenerateProjects = true)]
-    readonly Solution Solution;
-
-    [GitVersion(Framework = "net6.0", NoFetch = true)]
-    readonly GitVersion GitVersion;
-
     GitHubActions GitHubActions => GitHubActions.Instance;
 
     string BranchSpec => GitHubActions?.Ref;
 
     string BuildNumber => GitHubActions?.RunNumber.ToString();
 
+    [Parameter("The key to push to Nuget")]
+    [Secret]
+    readonly string NuGetApiKey;
+
+    [Solution]
+    readonly Solution Solution;
+
+    [GitVersion(Framework = "net8.0", NoFetch = true, NoCache = true)]
+    readonly GitVersion GitVersion;
+
     AbsolutePath ArtifactsDirectory => RootDirectory / "Artifacts";
+
+    AbsolutePath TestResultsDirectory => RootDirectory / "TestResults";
 
     string SemVer;
 
@@ -67,26 +67,17 @@ class Build : NukeBuild
             Information("SemVer = {semver}", SemVer);
         });
 
-    Target TestTemplateBuild => _ => _
+    Target Restore => _ => _
         .Executes(() =>
         {
-            var templateDirectory = RootDirectory / "templates" / "Normal";
-
-            // We're running the build script in the templates/Normal directory to see if that works as expected
-            PowerShellTasks.PowerShell("./build.ps1 Pack", workingDirectory: templateDirectory);
-
-            Assert.NotEmpty((templateDirectory / "Artifacts").GlobFiles("*.nupkg"));
-
-            templateDirectory = RootDirectory / "templates" / "SourceOnly";
-
-            PowerShellTasks.PowerShell("./build.ps1 Pack", workingDirectory: templateDirectory);
-
-            Assert.NotEmpty((templateDirectory / "Artifacts").GlobFiles("*.nupkg"));
+            DotNetRestore(s => s
+                .SetProjectFile(Solution)
+                .EnableNoCache());
         });
 
     Target Compile => _ => _
         .DependsOn(CalculateNugetVersion)
-        .DependsOn(TestTemplateBuild)
+        .DependsOn(Restore)
         .Executes(() =>
         {
             ReportSummary(s => s
@@ -97,15 +88,66 @@ class Build : NukeBuild
                 .SetProjectFile(Solution)
                 .SetConfiguration(Configuration)
                 .EnableNoLogo()
-                .EnableNoCache()
+                .EnableNoRestore()
                 .SetAssemblyVersion(GitVersion.AssemblySemVer)
                 .SetFileVersion(GitVersion.AssemblySemFileVer)
                 .SetInformationalVersion(GitVersion.InformationalVersion));
         });
 
+    Target RunTests => _ => _
+        .DependsOn(Compile)
+        .Executes(() =>
+        {
+            TestResultsDirectory.CreateOrCleanDirectory();
+            var project = Solution.GetProject("MyPackage.Specs");
+
+            DotNetTest(s => s
+                // We run tests in debug mode so that Fluent Assertions can show the names of variables
+                .SetConfiguration(Configuration.Debug)
+                // To prevent the machine language to affect tests sensitive to the current thread's culture
+                .SetProcessEnvironmentVariable("DOTNET_CLI_UI_LANGUAGE", "en-US")
+                .SetDataCollector("XPlat Code Coverage")
+                .SetResultsDirectory(TestResultsDirectory)
+                .SetProjectFile(project)
+                .CombineWith(project.GetTargetFrameworks(),
+                    (ss, framework) => ss
+                        .SetFramework(framework)
+                        .AddLoggers($"trx;LogFileName={framework}.trx")
+                ));
+        });
+
+    Target ApiChecks => _ => _
+        .DependsOn(Compile)
+        .Executes(() =>
+        {
+            var project = Solution.GetProject("MyPackage.ApiVerificationTests");
+
+            DotNetTest(s => s
+                .SetConfiguration(Configuration == Configuration.Debug ? "Debug" : "Release")
+                .SetProcessEnvironmentVariable("DOTNET_CLI_UI_LANGUAGE", "en-US")
+                .SetResultsDirectory(TestResultsDirectory)
+                .SetProjectFile(project)
+                .AddLoggers($"trx;LogFileName={project!.Name}.trx"));
+        });
+
+    Target CodeCoverage => _ => _
+        .DependsOn(RunTests)
+        .Executes(() =>
+        {
+            ReportGenerator(s => s
+                .SetTargetDirectory(TestResultsDirectory / "reports")
+                .AddReports(TestResultsDirectory / "**/coverage.cobertura.xml")
+                .AddReportTypes(ReportTypes.lcov, ReportTypes.Html)
+                .AddFileFilters("-*.g.cs"));
+
+            string link = TestResultsDirectory / "reports" / "index.html";
+            Information($"Code coverage report: \x1b]8;;file://{link.Replace('\\', '/')}\x1b\\{link}\x1b]8;;\x1b\\");
+        });
 
     Target Pack => _ => _
-        .DependsOn(Compile)
+        .DependsOn(CalculateNugetVersion)
+        .DependsOn(ApiChecks)
+        .DependsOn(CodeCoverage)
         .Executes(() =>
         {
             ReportSummary(s => s
@@ -113,7 +155,7 @@ class Build : NukeBuild
                     .AddPair("Packed version", semVer)));
 
             DotNetPack(s => s
-                .SetProject(Solution)
+                .SetProject(Solution.GetProject("MyPackage"))
                 .SetOutputDirectory(ArtifactsDirectory)
                 .SetConfiguration(Configuration == Configuration.Debug ? "Debug" : "Release")
                 .EnableNoBuild()
