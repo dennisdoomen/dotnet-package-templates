@@ -4,7 +4,7 @@
   <br>
 </h1>
 
-<h4 align="center">"dotnet new" templates for building NuGet-published multi-targeting libraries with all the bells and whistles</h4>
+<h4 align="center">"dotnet new" templates for building NuGet-published multi-targeting binary or source-only libraries with all the bells and whistles</h4>
 
 <div align="center">
 
