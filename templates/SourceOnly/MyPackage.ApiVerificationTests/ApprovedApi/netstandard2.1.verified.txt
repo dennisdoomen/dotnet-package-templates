@@ -1,4 +1,5 @@
-﻿[assembly: System.Runtime.CompilerServices.InternalsVisibleTo("MyPackage.Specs")]
+﻿[assembly: System.Reflection.AssemblyMetadata("RepositoryUrl", "https://github.com/your-user-name/my-package")]
+[assembly: System.Runtime.CompilerServices.InternalsVisibleTo("MyPackage.Specs")]
 namespace MyPackage
 {
     public class MyPackage
