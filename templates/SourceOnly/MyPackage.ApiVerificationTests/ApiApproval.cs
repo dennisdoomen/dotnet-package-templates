@@ -5,6 +5,7 @@ using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 using System.Xml.XPath;
+using Pathy;
 using PublicApiGenerator;
 using VerifyTests;
 using VerifyTests.DiffPlex;
@@ -15,14 +16,19 @@ namespace MyPackage.ApiVerificationTests;
 
 public class ApiApproval
 {
-    static ApiApproval() => VerifyDiffPlex.Initialize(OutputType.Minimal);
+    private static readonly ChainablePath SourcePath = ChainablePath.Current / ".." / ".." / ".." / "..";
+
+    static ApiApproval()
+    {
+        VerifyDiffPlex.Initialize(OutputType.Minimal);
+    }
 
     [Theory]
     [ClassData(typeof(TargetFrameworksTheoryData))]
     public Task ApproveApi(string framework)
     {
         var configuration = typeof(ApiApproval).Assembly.GetCustomAttribute<AssemblyConfigurationAttribute>()!.Configuration;
-        var assemblyFile = CombinedPaths("MyPackage", "bin", configuration, framework, "MyPackage.dll");
+        var assemblyFile = SourcePath / "MyPackage" / "bin" / configuration / framework / "MyPackage.dll";
         var assembly = Assembly.LoadFile(assemblyFile);
         var publicApi = assembly.GeneratePublicApi(options: null);
 
@@ -38,16 +44,10 @@ public class ApiApproval
     {
         public TargetFrameworksTheoryData()
         {
-            var csproj = CombinedPaths("MyPackage", "MyPackage.csproj");
+            var csproj = SourcePath / "MyPackage" / "MyPackage.csproj";
             var project = XDocument.Load(csproj);
             var targetFrameworks = project.XPathSelectElement("/Project/PropertyGroup/TargetFrameworks");
             AddRange(targetFrameworks!.Value.Split(';'));
         }
     }
-
-    private static string CombinedPaths(params string[] paths) =>
-        Path.GetFullPath(Path.Combine(paths.Prepend(GetSolutionDirectory()).ToArray()));
-
-    private static string GetSolutionDirectory([CallerFilePath] string path = "") =>
-        Path.Combine(Path.GetDirectoryName(path)!, "..");
 }
