@@ -4,7 +4,11 @@
   <br>
 </h1>
 
+{{ if source_only }}
+<h4 align="center">Nice tagline about your package, mentioning it can be used without the dependency hell</h4>
+{{ else }}
 <h4 align="center">Nice tagline about your package</h4>
+{{ end }}
 
 <div align="center">
 
@@ -48,6 +52,9 @@ Add stuff like:
 * What makes it different from other libraries?
 * Why did you create it.
 * What problem does it solve?
+{{ if source_only ~}}
+* Mention that it is a source-only package, which just adds a C# file and doesn't create binary dependencies
+{{ end ~}}
 
 ### Who created this?
 * Something about you, your company, your team, etc.

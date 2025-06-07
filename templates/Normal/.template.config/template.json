@@ -5,10 +5,10 @@
     "tags": {
       "language": "C#"
     },
-    "identity": "DennisDoomen.BinaryLibraryPackage.Template",
-    "name": "Class Library NuGet Package Solution",
-    "description": "NuGet-published binary multi-targeting library with all the bells and whistles",
-    "shortName": "class-library-package-solution",
+    "identity": "DennisDoomen.{{ source_only ? "SourceLibraryPackage" : "BinaryLibraryPackage" }}.Template",
+    "name": "Class Library NuGet{{ source_only ? " Source-Only " : " " }}Package Solution",
+    "description": "NuGet-published {{ source_only ? "source-only" : "binary" }} multi-targeting library with all the bells and whistles",
+    "shortName": "class-library-{{ source_only ? "source-only-" : "" }}package-solution",
     "sourceName": "MyPackage",
     "sources": [
       {

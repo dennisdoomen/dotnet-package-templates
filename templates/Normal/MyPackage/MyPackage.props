@@ -1,3 +1,4 @@
+{{ if source_only }}
 <!-- Make sure the source code files are excluded from the Solution Explorer in the project that used this package -->
 <Project>
   <ItemGroup>
@@ -6,3 +7,4 @@
     </Compile>
   </ItemGroup>
 </Project>
+{{ end }}

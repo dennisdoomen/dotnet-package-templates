@@ -28,6 +28,7 @@
         "Compile",
         "Default",
         "Pack",
+        "PrepareTemplates",
         "Push",
         "TestTemplateBuild"
       ]

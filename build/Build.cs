@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using Nuke.Common;
 using Nuke.Common.CI.GitHubActions;
@@ -12,6 +13,7 @@ using Nuke.Common.Tools.ReportGenerator;
 using Nuke.Common.Utilities;
 using Nuke.Common.Utilities.Collections;
 using Nuke.Components;
+using Scriban;
 using static Nuke.Common.Tools.DotNet.DotNetTasks;
 using static Nuke.Common.Tools.ReportGenerator.ReportGeneratorTasks;
 using static Serilog.Log;
@@ -67,17 +69,46 @@ class Build : NukeBuild
             Information("SemVer = {semver}", SemVer);
         });
 
-    Target TestTemplateBuild => _ => _
+    Target PrepareTemplates => _ => _
         .Executes(() =>
         {
-            var templateDirectory = RootDirectory / "templates" / "Normal";
+            AbsolutePath normalTarget = ArtifactsDirectory / "templates" / "Normal";
+            AbsolutePath sourceOnlyTarget = ArtifactsDirectory / "templates" / "SourceOnly";
+
+            AbsolutePath templateSource = RootDirectory / "templates" / "Normal";
+            foreach (AbsolutePath file in templateSource.GlobFiles("**/*"))
+            {
+                RelativePath relativePathTo = templateSource.GetRelativePathTo(file);
+                string content = file.ReadAllText();
+
+                Information("Processing {File}", file);
+
+                var template = Template.Parse(content, file);
+
+                template.RenderToFileIfNotEmpty(normalTarget / relativePathTo, new
+                {
+                    SourceOnly = false
+                });
+
+                template.RenderToFileIfNotEmpty(sourceOnlyTarget / relativePathTo, new
+                {
+                    SourceOnly = true
+                });
+            }
+        });
+
+    Target TestTemplateBuild => _ => _
+        .DependsOn(PrepareTemplates)
+        .Executes(() =>
+        {
+            var templateDirectory = ArtifactsDirectory / "templates" / "Normal";
 
             // We're running the build script in the templates/Normal directory to see if that works as expected
             PowerShellTasks.PowerShell("./build.ps1 Pack", workingDirectory: templateDirectory);
 
             Assert.NotEmpty((templateDirectory / "Artifacts").GlobFiles("*.nupkg"));
 
-            templateDirectory = RootDirectory / "templates" / "SourceOnly";
+            templateDirectory = ArtifactsDirectory / "templates" / "SourceOnly";
 
             PowerShellTasks.PowerShell("./build.ps1 Pack", workingDirectory: templateDirectory);
 
