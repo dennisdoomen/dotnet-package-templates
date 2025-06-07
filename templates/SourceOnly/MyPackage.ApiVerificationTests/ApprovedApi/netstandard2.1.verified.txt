@@ -1,8 +1,0 @@
-﻿[assembly: System.Runtime.CompilerServices.InternalsVisibleTo("MyPackage.Specs")]
-namespace MyPackage
-{
-    public class MyPackage
-    {
-        public MyPackage() { }
-    }
-}

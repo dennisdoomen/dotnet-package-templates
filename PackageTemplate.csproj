@@ -13,11 +13,12 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Content Include="templates\**\*"
-             Exclude="templates\**\bin\**;templates\**\obj\**;templates\**\_ReSharper.Caches\**;templates\**\.idea\**;templates\**\.nuke\temp\**;templates\**\Artifacts\**;templates\**\TestResults\**;"
+    <Content Include="artifacts\templates\**\*"
+             Exclude="artifacts\templates\**\bin\**;artifacts\templates\**\obj\**;artifacts\templates\**\_ReSharper.Caches\**;artifacts\templates\**\.idea\**;artifacts\templates\**\.nuke\temp\**;artifacts\templates\**\Artifacts\**;artifacts\templates\**\TestResults\**;"
+             PackagePath="content\templates\"
     />
     <Compile Remove="**\*" />
-    <None Include="README.md" Pack="true" PackagePath="\"/>
+    <Content Include="README.md" Pack="true" PackagePath="\" />
   </ItemGroup>
 
   <PropertyGroup>
@@ -27,7 +28,7 @@
     <Company>Dennis Doomen</Company>
     <Authors>Dennis Doomen</Authors>
     <Copyright>Dennis Doomen 2025</Copyright>
-    <Description>A "dotnet new" template for a .NET class library package with all the necessary components to publish it on NuGet.</Description>
+    <Description>A bunch of "dotnet new" solution templates for building high-quality binary and source-only packages inspired by Fluent Assertions.</Description>
     <PackageTags>c#;.net;template;nuget</PackageTags>
     <PackageCopyright>Dennis Doomen 2025</PackageCopyright>
     <PackageProjectUrl>https://github.com/dennisdoomen/dotnet-package-templates</PackageProjectUrl>

@@ -1,4 +1,6 @@
-﻿[assembly: System.Reflection.AssemblyMetadata("RepositoryUrl", "https://github.com/your-user-name/my-package")]
+﻿{{- if !source_only -}}
+[assembly: System.Reflection.AssemblyMetadata("RepositoryUrl", "https://github.com/your-user-name/my-package")]
+{{ end -}}
 [assembly: System.Runtime.CompilerServices.InternalsVisibleTo("MyPackage.Specs")]
 namespace MyPackage
 {

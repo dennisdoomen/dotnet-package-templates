@@ -1,17 +1,25 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-    <PropertyGroup>
-        <TargetFrameworks>netstandard2.0;netstandard2.1;net47;net8.0</TargetFrameworks>
-        <Nullable>enable</Nullable>
-        <LangVersion>default</LangVersion>
-        <ImplicitUsings>enable</ImplicitUsings>
-        <NoWarn>1591;1573</NoWarn>
-        <GeneratePackageOnBuild>False</GeneratePackageOnBuild>
-        <AllowedOutputExtensionsInPackageBuildOutputFolder>$(AllowedOutputExtensionsInPackageBuildOutputFolder);.pdb</AllowedOutputExtensionsInPackageBuildOutputFolder>
-        <EmbedUntrackedSources>true</EmbedUntrackedSources>
-        <ProduceReferenceAssembly>true</ProduceReferenceAssembly>
-    </PropertyGroup>
+  <PropertyGroup>
+    <TargetFrameworks>netstandard2.0;netstandard2.1;net47;net8.0</TargetFrameworks>
+    <Nullable>enable</Nullable>
+    <LangVersion>default</LangVersion>
+{{ if source_only ~}}
+    <ImplicitUsings>disable</ImplicitUsings>
+    <NuSpecFile>.nuspec</NuSpecFile>
+    <NuspecProperties>version=$(Version)</NuspecProperties>
+    <DefineConstants>MYPACKAGE_COMPILE</DefineConstants>
+{{ else ~}}
+    <ImplicitUsings>enable</ImplicitUsings>
+{{ end ~}}
+    <NoWarn>1591;1573</NoWarn>
+    <GeneratePackageOnBuild>False</GeneratePackageOnBuild>
+    <AllowedOutputExtensionsInPackageBuildOutputFolder>$(AllowedOutputExtensionsInPackageBuildOutputFolder);.pdb</AllowedOutputExtensionsInPackageBuildOutputFolder>
+    <EmbedUntrackedSources>true</EmbedUntrackedSources>
+    <ProduceReferenceAssembly>true</ProduceReferenceAssembly>
+  </PropertyGroup>
 
+{{~ if !source_only ~}}
   <PropertyGroup Label="Package info">
     <Authors>Your name</Authors>
     <PackageDescription>
@@ -27,6 +35,7 @@
     <PackageReleaseNotes>https://github.com/your-user-name/my-package/releases</PackageReleaseNotes>
     <Copyright>Copyright 2025-$([System.DateTime]::Now.ToString(yyyy)) Your Name</Copyright>
   </PropertyGroup>
+{{ end ~}}
 
   <ItemGroup Label="Package files">
     <None Include="..\PackageIcon.png" Pack="true" Visible="false" PackagePath="" />

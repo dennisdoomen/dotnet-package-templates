@@ -1,3 +1,4 @@
+{%{
 name: Build
 
 on:
@@ -75,3 +76,4 @@ jobs:
       with:
         comment_mode: always
         files: "artifacts/**/**/*.trx"
+  }%}
