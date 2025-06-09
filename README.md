@@ -76,7 +76,7 @@ This repository is available as [a NuGet package](https://www.nuget.org/packages
 
 1. Create a new directory for your library initialized with Git
 1. Run the following command
-   
+
     `dotnet new class-library-package-solution --name TheNameOfYourAwesomeLibrary`
 
    Or, if you prefer to build a NuGet package that only adds source files to a project (and avoids binary dependencies)
@@ -94,7 +94,7 @@ The template makes a lot of assumptions, so after generating the project, there'
 * Update the `README.md` with information about your library
 * Review the guidelines in `CONTRIBUTION.md` to see if it aligns with how you want to handle contributions
 * Adjust the .NET frameworks this library should target
-* Adjust the namespace 
+* Adjust the namespace
 * Set-up labels in GitHub matching those in the `release.yml` so you can label pull requests accordingly
 * Alter the coverage service that is being used.
 * Determine if you want to use API verification against snapshots
@@ -104,7 +104,7 @@ The template makes a lot of assumptions, so after generating the project, there'
 
 ### About API verification
 
-The `ApiVerificationTests` will generate a `.txt` file containing a representation (per target framework) of the public API of your library. It's a nice technique to prevent accidentally introducing breaking changes. So, whenever the structure of your API changes compared to the snapshot stored in the `ApprovedApi` folder, the test will fail. 
+The `ApiVerificationTests` will generate a `.txt` file containing a representation (per target framework) of the public API of your library. It's a nice technique to prevent accidentally introducing breaking changes. So, whenever the structure of your API changes compared to the snapshot stored in the `ApprovedApi` folder, the test will fail.
 You can then use `AcceptApiChanges.ps1` to update the snapshots and make the test succeed again.
 
 ## Building
@@ -140,6 +140,7 @@ This library uses [Semantic Versioning](https://semver.org/) to give meaning to 
 This library wouldn't have been possible without the following tools, packages and companies:
 
 * [ASP.NET Core Template](https://github.com/NikolayIT/ASP.NET-Core-Template) - Created by [Nikolay Kostov](https://github.com/NikolayIT) and the inspiration for this repo.
+* [Scriban](https://github.com/scriban/scriban/) - A fast, powerful, safe and lightweight scripting language and engine by [Alexandre Mutel](https://github.com/xoofx)
 * [Nuke](https://nuke.build/) - Smart automation for DevOps teams and CI/CD pipelines by [Matthias Koch](https://github.com/matkoch)
 * [Rider](https://www.jetbrains.com/rider/) - The world's most loved .NET and game dev IDE by [JetBrains](https://www.jetbrains.com/)
 * [xUnit](https://xunit.net/) - Community-focused unit testing tool for .NET by [Brad Wilson](https://github.com/bradwilson)
