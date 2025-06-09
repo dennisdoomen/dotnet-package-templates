@@ -75,7 +75,7 @@ class Build : NukeBuild
             AbsolutePath normalTarget = ArtifactsDirectory / "templates" / "Normal";
             AbsolutePath sourceOnlyTarget = ArtifactsDirectory / "templates" / "SourceOnly";
 
-            AbsolutePath templateSource = RootDirectory / "templates" / "Normal";
+            AbsolutePath templateSource = RootDirectory / "templates" / "Source";
             foreach (AbsolutePath file in templateSource.GlobFiles("**/*"))
             {
                 RelativePath relativePathTo = templateSource.GetRelativePathTo(file);
