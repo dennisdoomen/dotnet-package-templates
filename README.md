@@ -50,6 +50,7 @@ It includes:
 * Customized release notes templates for GitHub connected to pull requests labels.
 * A test project using [xUnit](https://xunit.net/) and [Fluent Assertions 7](https://fluentassertions.com/)
 * Validation of the public API of the library against snapshots using [Verify](https://github.com/VerifyTests/Verify)
+* NuGet auditing
 
 ### What's so special about that?
 
@@ -69,6 +70,10 @@ Contact me through [Email](mailto:dennis.doomen@avivasolutions.nl), [Bluesky](ht
 This repository is available as [a NuGet package](https://www.nuget.org/packages/DotNetLibraryPackageTemplates) on https://nuget.org. To install it, use the following command-line:
 
 `dotnet new install DotNetLibraryPackageTemplates`
+
+To update the templates, use the following command-line
+
+`dotnet new update`
 
 ## How do I use it?
 
@@ -100,7 +105,16 @@ The template makes a lot of assumptions, so after generating the project, there'
 * Determine if you want to use API verification against snapshots
 * Study the Nuke `build.cs` file or invoking it through `build.ps1 -plan` to see how it works
 * See if all dependencies are up-to-date
+* Configure NuGet auditing (see next paragraph)
 * Adjust the `funding.yml` to allow people to sponsor your project
+
+## Additional things to be aware of
+
+### About NuGet auditing
+By default, a `dotnet restore` will also check the the NuGet packages [for any vulnerabilities](https://learn.microsoft.com/en-us/nuget/concepts/auditing-packages). If you run into those, there are a couple of options you can take.
+1. Update the dependencies to a version that resolve the vulnerability
+1. Update the `WarningsNotAsErrors` element in the `Directory.Build.Props` file to include the relevant `NU190x` error codes as listed [here](https://learn.microsoft.com/en-us/nuget/concepts/auditing-packages#warning-codes).
+1. Disable auditing entirely by setting the `NuGetAudit` element to `false` in that same `Directory.Build.Props` file.
 
 ### About API verification
 
