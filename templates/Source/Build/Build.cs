@@ -46,6 +46,9 @@ class Build : NukeBuild
 
     AbsolutePath TestResultsDirectory => RootDirectory / "TestResults";
 
+    [NuGetPackage("PackageGuard", "PackageGuard.dll")]
+    Tool PackageGuard;
+
     string SemVer;
 
     Target CalculateNugetVersion => _ => _
@@ -130,6 +133,13 @@ class Build : NukeBuild
                 .AddLoggers($"trx;LogFileName={project!.Name}.trx"));
         });
 
+    Target ScanPackages => _ => _
+        .DependsOn(Compile)
+        .Executes(() =>
+        {
+            PackageGuard($"--configpath={RootDirectory / "PackageGuard.config.json"} {RootDirectory}");
+        });
+
     Target CodeCoverage => _ => _
         .DependsOn(RunTests)
         .Executes(() =>
@@ -145,6 +155,7 @@ class Build : NukeBuild
         });
 
     Target Pack => _ => _
+        .DependsOn(ScanPackages)
         .DependsOn(CalculateNugetVersion)
         .DependsOn(ApiChecks)
         .DependsOn(CodeCoverage)

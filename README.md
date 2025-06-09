@@ -50,7 +50,8 @@ It includes:
 * Customized release notes templates for GitHub connected to pull requests labels.
 * A test project using [xUnit](https://xunit.net/) and [Fluent Assertions 7](https://fluentassertions.com/)
 * Validation of the public API of the library against snapshots using [Verify](https://github.com/VerifyTests/Verify)
-* NuGet auditing
+* NuGet auditing using .NET built-in auditing capabilities
+* NuGet package and licensing scanning through [PackageGuard](https://github.com/dennisdoomen/packageguard?tab=readme-ov-file#readme)
 
 ### What's so special about that?
 
@@ -106,6 +107,7 @@ The template makes a lot of assumptions, so after generating the project, there'
 * Study the Nuke `build.cs` file or invoking it through `build.ps1 -plan` to see how it works
 * See if all dependencies are up-to-date
 * Configure NuGet auditing (see next paragraph)
+* Check out the allowed open-source licenses and packages in the `PackageGuard.config.json`
 * Adjust the `funding.yml` to allow people to sponsor your project
 
 ## Additional things to be aware of
