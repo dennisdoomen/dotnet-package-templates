@@ -28,6 +28,8 @@
         "Compile",
         "Default",
         "Pack",
+        "PreparePackageReadme",
+        "PrepareTemplateReadmes",
         "PrepareTemplates",
         "Push",
         "TestTemplateBuild"
