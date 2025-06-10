@@ -16,6 +16,7 @@
     <description>A nice description of your package as you want to see it on NuGet.</description>
     <tags>your tags</tags>
     <copyright>Copyright 2025 Your Name</copyright>
+    <readme>Readme.md</readme>
   </metadata>
   <files>
     <file src="*.cs" target="contentFiles/cs/net8.0/MyPackage/"/>
@@ -25,6 +26,7 @@
     <!-- 👇 Hide content files from Visual Studio solution explorer  -->
     <file src="MyPackage.props" target="build/MyPackage.props" />
     <file src="..\PackageIcon.png" target="PackageIcon.png" />
+    <file src="..\PackageReadme.md" target="Readme.md" />
   </files>
 </package>
 {{ end }}

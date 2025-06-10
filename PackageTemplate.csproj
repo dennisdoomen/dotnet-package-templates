@@ -18,7 +18,7 @@
              PackagePath="content\templates\"
     />
     <Compile Remove="**\*" />
-    <Content Include="README.md" Pack="true" PackagePath="\" />
+    <Content Include="artifacts/Readme.md" Pack="true" PackagePath="\" />
   </ItemGroup>
 
   <PropertyGroup>

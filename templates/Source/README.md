@@ -1,3 +1,4 @@
+{{ if !package_readme }}
 <h1 align="center">
   <br>
   MyPackage
@@ -39,6 +40,7 @@
 
 </div>
 
+{{ end }}
 ## About
 
 ### What's this?
@@ -90,6 +92,7 @@ Or, if you have, the [Nuke tool installed](https://nuke.build/docs/getting-start
 
 Also try using `--help` to see all the available options or `--plan` to see what the scripts does.
 
+{{ if !package_readme }}
 ## Contributing
 
 Your contributions are always welcome! Please have a look at the [contribution guidelines](CONTRIBUTING.md) first.
@@ -101,6 +104,7 @@ Previous contributors include:
 </a>
 
 (Made with [contrib.rocks](https://contrib.rocks))
+{{ end }}
 
 ## Versioning
 This library uses [Semantic Versioning](https://semver.org/) to give meaning to the version numbers. For the versions available, see the [tags](/releases) on this repository.
@@ -126,6 +130,7 @@ This library wouldn't have been possible without the following tools, packages a
 * [Buy me a Coffee](https://ko-fi.com/your-github-username)
 * [Patreon](https://patreon.com/your-patreon-username)
 
+{{ if !package_readme }}
 ## You may also like
 
 * Your blog
@@ -134,3 +139,4 @@ This library wouldn't have been possible without the following tools, packages a
 
 ## License
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+{{ end }}

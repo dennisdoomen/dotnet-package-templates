@@ -1,10 +1,12 @@
 <h1 align="center">
   <br>
-  .NET Library Package Templates
+  .NET Library Starter Kit
   <br>
 </h1>
 
-<h4 align="center">"dotnet new" templates for building NuGet-published multi-targeting binary or source-only libraries with all the bells and whistles</h4>
+<h4 align="center">
+A battle-tested starter kit for building NuGet libraries, born from half a billion downloads.
+</h4>
 
 <div align="center">
 
@@ -97,7 +99,7 @@ To update the templates, use the following command-line
 
 The template makes a lot of assumptions, so after generating the project, there's a couple of things you can tweak.
 
-* Update the `README.md` with information about your library
+* Update the `Readme.md` and `PackageReadme.md` with information about your library
 * Review the guidelines in `CONTRIBUTION.md` to see if it aligns with how you want to handle contributions
 * Adjust the .NET frameworks this library should target
 * Adjust the namespace
@@ -178,8 +180,11 @@ This library wouldn't have been possible without the following tools, packages a
 
 ## You may also like
 
-* [My Blog](https://www.dennisdoomen.com)
+* [My Blog](https://www.dennisdoomen.com) 
 * [FluentAssertions](https://github.com/fluentassertions/fluentassertions) - Extension methods to fluently assert the outcome of .NET tests
+* [PackageGuard](https://github.com/dennisdoomen/packageguard?tab=readme-ov-file#readme) - Get a grip on your open-source packages
+* [Reflectify](https://github.com/dennisdoomen/reflectify?tab=readme-ov-file#readme) - Reflection extensions without causing dependency pains
+* [Pathy](https://github.com/dennisdoomen/pathy?tab=readme-ov-file#readme) - Fluently building and using file and directory paths without binary dependencies
 * [C# Coding Guidelines](https://csharpcodingguidelines.com/) - Forkable coding guidelines for all C# versions
 
 ## License
