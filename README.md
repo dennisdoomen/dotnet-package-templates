@@ -100,9 +100,10 @@ To update the templates, use the following command-line
 The template makes a lot of assumptions, so after generating the project, there's a couple of things you can tweak.
 
 * Update the `Readme.md` and `PackageReadme.md` with information about your library
-* Review the guidelines in `CONTRIBUTION.md` to see if it aligns with how you want to handle contributions
+* Review the guidelines in `CONTRIBUTING.md` to see if it aligns with how you want to handle contributions
+* Review the issue templates under `.github/issue_template`
 * Adjust the .NET frameworks this library should target
-* Adjust the namespace
+* Adjust the root namespace and assembly names
 * Set-up labels in GitHub matching those in the `release.yml` so you can label pull requests accordingly
 * Alter the coverage service that is being used.
 * Determine if you want to use API verification against snapshots
