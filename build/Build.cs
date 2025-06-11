@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using Nuke.Common;
 using Nuke.Common.CI.GitHubActions;
@@ -9,14 +8,10 @@ using Nuke.Common.Tooling;
 using Nuke.Common.Tools.DotNet;
 using Nuke.Common.Tools.GitVersion;
 using Nuke.Common.Tools.PowerShell;
-using Nuke.Common.Tools.ReportGenerator;
-using System.IO;
 using Nuke.Common.Utilities;
 using Nuke.Common.Utilities.Collections;
-using Nuke.Components;
 using Scriban;
 using static Nuke.Common.Tools.DotNet.DotNetTasks;
-using static Nuke.Common.Tools.ReportGenerator.ReportGeneratorTasks;
 using static Serilog.Log;
 
 class Build : NukeBuild
@@ -73,10 +68,9 @@ class Build : NukeBuild
     Target PrepareTemplates => _ => _
         .Executes(() =>
         {
-            AbsolutePath normalTarget = ArtifactsDirectory / "templates" / "Normal";
-            AbsolutePath sourceOnlyTarget = ArtifactsDirectory / "templates" / "SourceOnly";
-
+            (ArtifactsDirectory / "templates").CreateOrCleanDirectory();
             AbsolutePath templateSource = RootDirectory / "templates" / "Source";
+
             foreach (AbsolutePath file in templateSource.GlobFiles("**/*"))
             {
                 RelativePath relativePathTo = templateSource.GetRelativePathTo(file);
@@ -86,14 +80,28 @@ class Build : NukeBuild
 
                 var template = Template.Parse(content, file);
 
-                template.RenderToFileIfNotEmpty(normalTarget / relativePathTo, new
+                template.RenderToFileIfNotEmpty(ArtifactsDirectory / "templates" / "Normal" / relativePathTo, new
                 {
-                    SourceOnly = false
+                    SourceOnly = false,
+                    OpenSource = false,
                 });
 
-                template.RenderToFileIfNotEmpty(sourceOnlyTarget / relativePathTo, new
+                template.RenderToFileIfNotEmpty(ArtifactsDirectory / "templates" / "SourceOnly" / relativePathTo, new
                 {
-                    SourceOnly = true
+                    SourceOnly = true,
+                    OpenSource = false,
+                });
+
+                template.RenderToFileIfNotEmpty(ArtifactsDirectory / "templates" / "NormalOss" / relativePathTo, new
+                {
+                    SourceOnly = false,
+                    OpenSource = true,
+                });
+
+                template.RenderToFileIfNotEmpty(ArtifactsDirectory / "templates" / "SourceOnlyOss" / relativePathTo, new
+                {
+                    SourceOnly = true,
+                    OpenSource = true,
                 });
             }
         });
@@ -102,6 +110,7 @@ class Build : NukeBuild
         .DependsOn(PrepareTemplates)
         .Executes(() =>
         {
+
             string readmeTemplate = (RootDirectory / "templates" / "Source" / "README.md").ReadAllText();
             var template = Template.Parse(readmeTemplate);
             var readmeContents = template.Render(new
@@ -109,26 +118,27 @@ class Build : NukeBuild
                 PackageReadme = true,
             });
 
-            (ArtifactsDirectory / "templates" / "Normal" / "PackageReadme.md").WriteAllText(readmeContents);
-            (ArtifactsDirectory / "templates" / "SourceOnly" / "PackageReadme.md").WriteAllText(readmeContents);
+            string[] names = ["Normal", "SourceOnly", "NormalOss", "SourceOnlyOss"];
+            foreach (string name in names)
+            {
+                (ArtifactsDirectory / "templates" / name / "PackageReadme.md").WriteAllText(readmeContents);
+            }
         });
 
     Target TestTemplateBuild => _ => _
         .DependsOn(PrepareTemplateReadmes)
         .Executes(() =>
         {
-            var templateDirectory = ArtifactsDirectory / "templates" / "Normal";
+            string[] names = ["Normal", "SourceOnly", "NormalOss", "SourceOnlyOss"];
+            foreach (string name in names)
+            {
+                var templateDirectory = ArtifactsDirectory / "templates" / name;
 
-            // We're running the build script in the templates/Normal directory to see if that works as expected
-            PowerShellTasks.PowerShell("./build.ps1 Pack", workingDirectory: templateDirectory);
+                // We're running the build script in the templates/Normal directory to see if that works as expected
+                PowerShellTasks.PowerShell("./build.ps1 Pack", workingDirectory: templateDirectory);
 
-            Assert.NotEmpty((templateDirectory / "Artifacts").GlobFiles("*.nupkg"));
-
-            templateDirectory = ArtifactsDirectory / "templates" / "SourceOnly";
-
-            PowerShellTasks.PowerShell("./build.ps1 Pack", workingDirectory: templateDirectory);
-
-            Assert.NotEmpty((templateDirectory / "Artifacts").GlobFiles("*.nupkg"));
+                Assert.NotEmpty((templateDirectory / "Artifacts").GlobFiles("*.nupkg"));
+            }
         });
 
     Target Compile => _ => _

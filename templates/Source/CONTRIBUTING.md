@@ -1,6 +1,6 @@
 # Contributing to this repository
 
-Few open-source projects are going to be successful without contributions.
+Few {{ if open_source }}open-source {{end}}projects are going to be successful without contributions.
 This library is no exception and we are deeply grateful for all contributions no matter their size.
 However, to improve that collaboration this document presents a few steps to smoothen the process.
 

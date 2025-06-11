@@ -27,20 +27,20 @@
 ![](https://img.shields.io/badge/release%20strategy-githubflow-orange.svg)
 ![Static Badge](https://img.shields.io/badge/4.7%2C_6.0%2C_netstandard2.0%2C_netstandard2.1-dummy?label=dotnet&color=%235027d5)
 
-
-
 <a href="#about">About</a> •
 <a href="#how-to-use-it">How To Use</a> •
 <a href="#download">Download</a> •
-<a href="#contributors">Contributors</a> •
+<a href="#contributing">Contributing</a> •
 <a href="#versioning">Versioning</a> •
 <a href="#credits">Credits</a> •
 <a href="#related">Related</a> •
+{{~ if open_source ~}}
 <a href="#license">License</a>
+{{~ end ~}}
 
 </div>
 
-{{ end }}
+{{ end ~}}
 ## About
 
 ### What's this?
@@ -60,7 +60,9 @@ Add stuff like:
 
 ### Who created this?
 * Something about you, your company, your team, etc.
+{{ if open_source }}
 * How to contact you like LinkedIn, Twitter, Bluesky, Mastodon, email, etc.
+{{ end ~}}
 
 ## How do I use it?
 * Code examples
@@ -71,10 +73,21 @@ Some example code showing your library
 ```
 
 ## Download
-
+{{ if open_source }}
 This library is available as [a NuGet package](https://www.nuget.org/packages/mypackage) on https://nuget.org. To install it, use the following command-line:
 
   `dotnet add package mypackage`
+{{ else }}
+This library can be installed by adding the GitHub Packages feed to your package manager:
+
+ {%{ `dotnet nuget add source --username USERNAME --password ${{ secrets.GITHUB_TOKEN }} --store-password-in-clear-text --name github "https://nuget.pkg.github.com/NAMESPACE/index.json"` }%}
+
+Read more about [GitHub Packages](https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-nuget-registry).
+
+Then, install the package using the following command-line:
+
+  `dotnet add package mypackage`
+{{ end ~}}
 
 ## Building
 
@@ -92,10 +105,11 @@ Or, if you have, the [Nuke tool installed](https://nuke.build/docs/getting-start
 
 Also try using `--help` to see all the available options or `--plan` to see what the scripts does.
 
-{{ if !package_readme }}
+{{~ if !package_readme ~}}
 ## Contributing
 
 Your contributions are always welcome! Please have a look at the [contribution guidelines](CONTRIBUTING.md) first.
+{{~ if open_source ~}}
 
 Previous contributors include:
 
@@ -104,7 +118,8 @@ Previous contributors include:
 </a>
 
 (Made with [contrib.rocks](https://contrib.rocks))
-{{ end }}
+{{~ end ~}}
+{{~ end ~}}
 
 ## Versioning
 This library uses [Semantic Versioning](https://semver.org/) to give meaning to the version numbers. For the versions available, see the [tags](/releases) on this repository.
@@ -124,13 +139,14 @@ This library wouldn't have been possible without the following tools, packages a
 * [Meziantou](https://github.com/meziantou/Meziantou.Framework) - Another set of awesome Roslyn analyzers by [Gérald Barré](https://github.com/meziantou)
 * [Verify](https://github.com/VerifyTests/Verify) - Snapshot testing by [Simon Cropp](https://github.com/SimonCropp)
 
+{{~ if open_source ~}}
 ## Support the project
 * [Github Sponsors](https://github.com/sponsors/your-github-username)
 * [Tip Me](https://paypal.me/your-paypal-username)
 * [Buy me a Coffee](https://ko-fi.com/your-github-username)
 * [Patreon](https://patreon.com/your-patreon-username)
 
-{{ if !package_readme }}
+{{~ if !package_readme ~}}
 ## You may also like
 
 * Your blog
@@ -139,4 +155,5 @@ This library wouldn't have been possible without the following tools, packages a
 
 ## License
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-{{ end }}
+{{ end -}}
+{{ end -}}

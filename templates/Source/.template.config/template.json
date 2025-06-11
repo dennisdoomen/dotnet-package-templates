@@ -5,10 +5,6 @@
     "tags": {
       "language": "C#"
     },
-    "identity": "DennisDoomen.{{ source_only ? "SourceLibraryPackage" : "BinaryLibraryPackage" }}.Template",
-    "name": "Class Library NuGet{{ source_only ? " Source-Only " : " " }}Package Solution",
-    "description": "NuGet-published {{ source_only ? "source-only" : "binary" }} multi-targeting library with all the bells and whistles",
-    "shortName": "class-library-{{ source_only ? "source-only-" : "" }}package-solution",
     "sourceName": "MyPackage",
     "preferNameDirectory": true,
     "sources": [
@@ -19,5 +15,30 @@
           }
         ]
       }
-    ]
-  }
+    ],
+{{~ if !source_only && !opensource ~}}
+    "identity": "DeDo.NonOssBinaryLibrary.Template",
+    "name": "Class Library Binary NuGet Non-OSS Solution",
+    "description": "NuGet-published binary multi-targeting library with all the bells and whistles for Inner Sourcing",
+    "shortName": "nooss-binary-nuget-class-library-sln"
+{{ end ~}}
+{{~ if source_only && !opensource ~}}
+    "identity": "DeDo.NonOssSourceOnlyLibrary.Template",
+    "name": "Class Library Source-Only NuGet Non-OSS  Solution",
+    "description": "NuGet-published source-only multi-targeting library with all the bells and whistles for Inner Sourcing",
+    "shortName": "nooss-source-only-nuget-class-library-sln"
+{{ end ~}}
+{{~ if !source_only && opensource ~}}
+    "identity": "DeDo.OssBinaryLibrary.Template",
+    "name": "Class Library Binary NuGet OSS Solution",
+    "description": "NuGet-published binary multi-targeting OSS library with all the bells and whistles",
+    "shortName": "oss-binary-nuget-class-library-sln"
+{{ end ~}}
+{{~ if source_only && opensource ~}}
+    "identity": "DeDo.NonOssBinaryLibrary.Template",
+    "name": "Class Library Source-Only NuGet OSS Solution",
+    "description": "NuGet-published source-only multi-targeting OSS library with all the bells and whistles",
+    "shortName": "oss-source-only-nuget-class-library-sln"
+{{ end ~}}
+}
+
