@@ -36,7 +36,7 @@ class Build : NukeBuild
     [Secret]
     readonly string NuGetApiKey;
 
-    [Solution]
+    [Solution(GenerateProjects = true)]
     readonly Solution Solution;
 
     [GitVersion(Framework = "net8.0", NoFetch = true, NoCache = true)]

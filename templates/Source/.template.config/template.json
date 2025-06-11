@@ -10,6 +10,7 @@
     "description": "NuGet-published {{ source_only ? "source-only" : "binary" }} multi-targeting library with all the bells and whistles",
     "shortName": "class-library-{{ source_only ? "source-only-" : "" }}package-solution",
     "sourceName": "MyPackage",
+    "preferNameDirectory": true,
     "sources": [
       {
         "modifiers": [
