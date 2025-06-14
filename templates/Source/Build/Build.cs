@@ -1,10 +1,15 @@
 using System;
 using System.Linq;
 using Nuke.Common;
+{{~ if azdo ~}}
+using Nuke.Common.CI.AzurePipelines;
+{{~ else ~}}
 using Nuke.Common.CI.GitHubActions;
+{{~ end ~}}
 using Nuke.Common.IO;
 using Nuke.Common.ProjectModel;
 using Nuke.Common.Tooling;
+using Nuke.Common.Tools.Coverlet;
 using Nuke.Common.Tools.DotNet;
 using Nuke.Common.Tools.GitVersion;
 using Nuke.Common.Tools.ReportGenerator;
@@ -26,15 +31,32 @@ class Build : NukeBuild
     [Parameter("Configuration to build - Default is 'Debug' (local) or 'Release' (server)")]
     readonly Configuration Configuration = IsLocalBuild ? Configuration.Debug : Configuration.Release;
 
+{{~ if azdo ~}}
+    [Parameter("The Git specification of the branch or PR that is being build (e.g. ref/pull/123/merge or refs/heads/main)")]
+    string BranchSpec = "";
+
+    [Parameter("A unique number for the build, e.g. 1234")]
+    string BuildNumber = "";
+
+    [Parameter(
+        "Set the URI of the NuGet artifacts API, which is used to publish packages generated during the build process.")]
+    readonly string NugetArtifactsApiUri =
+        "https://pkgs.dev.azure.com/MyOrganization/MyProject/_packaging/MyFeed/nuget/v3/index.json";
+{{~ else ~}}
     GitHubActions GitHubActions => GitHubActions.Instance;
 
     string BranchSpec => GitHubActions?.Ref;
 
     string BuildNumber => GitHubActions?.RunNumber.ToString();
 
-    [Parameter("The key to push to Nuget")]
+    [Parameter(
+        "Set the URI specifying the location of the NuGet artifacts API, which is used to publish packages generated during the build process.")]
+    readonly string NugetArtifactsApiUri = "https://api.nuget.org/v3/index.json";
+{{~ end ~}}
+
+    [Parameter("The API key used to authenticate and authorize access to the NuGet artifacts API.")]
     [Secret]
-    readonly string NuGetApiKey;
+    readonly string NugetArtifactsApiKey;
 
     [Solution(GenerateProjects = true)]
     readonly Solution Solution;
@@ -44,7 +66,9 @@ class Build : NukeBuild
 
     AbsolutePath ArtifactsDirectory => RootDirectory / "Artifacts";
 
-    AbsolutePath TestResultsDirectory => RootDirectory / "TestResults";
+    AbsolutePath TestResultsDirectory => ArtifactsDirectory / "TestResults";
+
+    AbsolutePath CoverageResultsFile => TestResultsDirectory / "Cobertura.xml";
 
     [NuGetPackage("PackageGuard", "PackageGuard.dll")]
     Tool PackageGuard;
@@ -110,6 +134,8 @@ class Build : NukeBuild
                 // To prevent the machine language to affect tests sensitive to the current thread's culture
                 .SetProcessEnvironmentVariable("DOTNET_CLI_UI_LANGUAGE", "en-US")
                 .SetDataCollector("XPlat Code Coverage")
+                .SetCollectCoverage(true)
+                .SetCoverletOutputFormat(CoverletOutputFormat.cobertura)
                 .SetResultsDirectory(TestResultsDirectory)
                 .SetProjectFile(project)
                 .CombineWith(project.GetTargetFrameworks(),
@@ -140,25 +166,66 @@ class Build : NukeBuild
             PackageGuard($"--configpath={RootDirectory / "PackageGuard.config.json"} {RootDirectory}");
         });
 
-    Target CodeCoverage => _ => _
+    Target GenerateCodeCoverageReport => _ => _
         .DependsOn(RunTests)
         .Executes(() =>
         {
+{{~ if azdo ~}}
             ReportGenerator(s => s
-                .SetTargetDirectory(TestResultsDirectory / "reports")
-                .AddReports(TestResultsDirectory / "**/coverage.cobertura.xml")
+				.AddReports(TestResultsDirectory / "**/coverage.cobertura.xml")
+                .SetReportTypes(ReportTypes.HtmlInline_AzurePipelines_Light)
+                .SetTargetDirectory(ArtifactsDirectory / "html")
+                .AddFileFilters("-*.g.cs"));
+
+            ReportGenerator(s => s
+				.AddReports(TestResultsDirectory / "**/coverage.cobertura.xml")
+                .SetReportTypes(ReportTypes.Cobertura)
+                .SetTargetDirectory(TestResultsDirectory)
+                .AddFileFilters("-*.g.cs"));
+{{~ else ~}}
+            ReportGenerator(s => s
+				.AddReports(TestResultsDirectory / "**/coverage.cobertura.xml")
                 .AddReportTypes(ReportTypes.lcov, ReportTypes.Html)
+                .SetTargetDirectory(TestResultsDirectory / "reports")
                 .AddFileFilters("-*.g.cs"));
 
             string link = TestResultsDirectory / "reports" / "index.html";
             Information($"Code coverage report: \x1b]8;;file://{link.Replace('\\', '/')}\x1b\\{link}\x1b]8;;\x1b\\");
+{{~ end ~}}
         });
+
+{{~ if azdo ~}}
+    Target PublishTestResults => _ => _
+        .DependsOn(GenerateCodeCoverageReport)
+        .OnlyWhenStatic(() => Host is AzurePipelines)
+        .Executes(() =>
+        {
+            var testResults = TestResultsDirectory
+                    .GlobDirectories("**/*.trx")
+                    .Select(t => t.ToString())
+                    .ToArray();
+
+            Information($"Publishing .trx files to Azure Pipelines");
+
+            AzurePipelines.Instance.PublishTestResults(
+                ".NET tests",
+                AzurePipelinesTestResultsType.VSTest, testResults);
+
+            Information($"Publishing Cobertura {CoverageResultsFile!.Name} to Azure Pipelines");
+
+            AzurePipelines.Instance.PublishCodeCoverage(
+                AzurePipelinesCodeCoverageToolType.Cobertura,
+                CoverageResultsFile.ToString(),
+                ArtifactsDirectory / "html");
+        });
+{{~ end ~}}
 
     Target Pack => _ => _
         .DependsOn(ScanPackages)
         .DependsOn(CalculateNugetVersion)
         .DependsOn(ApiChecks)
-        .DependsOn(CodeCoverage)
+        .DependsOn(GenerateCodeCoverageReport)
+        {{~ if azdo }}.DependsOn(PublishTestResults){{~ end ~}}
         .Executes(() =>
         {
             ReportSummary(s => s
@@ -176,7 +243,28 @@ class Build : NukeBuild
                 .SetVersion(SemVer));
         });
 
+{{~ if azdo ~}}
+    Target UploadPackageAsPipelineArtifact => _ => _
+        .OnlyWhenStatic(() => Host is AzurePipelines)
+        .OnlyWhenStatic(() => IsServerBuild)
+        .DependsOn(Pack)
+        .Executes(() =>
+        {
+            AbsolutePath packageFile = ArtifactsDirectory.GlobFiles("*.nupkg")
+                .SingleOrError("Expected exactly one file to be found, found none or multiple files");
+
+            Information($"Uploading artifact ${packageFile!.Name} to Azure Pipelines");
+
+            AzurePipelines.Instance.UploadArtifacts("drop", "package", packageFile!);
+        });
+{{~ end ~}}
+
     Target Push => _ => _
+{{~ if azdo ~}}
+        .OnlyWhenStatic(() => IsServerBuild)
+        .OnlyWhenStatic(() => !IsPullRequest)
+        .DependsOn(UploadPackageAsPipelineArtifact)
+{{~ end ~}}
         .DependsOn(Pack)
         .OnlyWhenDynamic(() => IsTag)
         .ProceedAfterFailure()
@@ -187,18 +275,26 @@ class Build : NukeBuild
             Assert.NotEmpty(packages);
 
             DotNetNuGetPush(s => s
-                .SetApiKey(NuGetApiKey)
+                .SetApiKey(NugetArtifactsApiKey)
                 .EnableSkipDuplicate()
-                .SetSource("https://api.nuget.org/v3/index.json")
+                .SetSource(NugetArtifactsApiUri)
                 .EnableNoSymbols()
                 .CombineWith(packages,
                     (v, path) => v.SetTargetPath(path)));
         });
 
     Target Default => _ => _
+		.DependsOn(Pack)
+{{~ if azdo ~}}
+		.DependsOn(UploadPackageAsPipelineArtifact)
+{{~ end ~}}
         .DependsOn(Push);
 
+{{~ if azdo ~}}
+	bool IsPullRequest => BranchSpec.Contains("/pull/");
+{{~ else ~}}
     bool IsPullRequest => GitHubActions?.IsPullRequest ?? false;
+{{~ end ~}}
 
     bool IsTag => BranchSpec != null && BranchSpec.Contains("refs/tags", StringComparison.OrdinalIgnoreCase);
 }

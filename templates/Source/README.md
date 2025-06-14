@@ -13,6 +13,7 @@
 
 <div align="center">
 
+{{~ if !azdo ~}}
 [![](https://img.shields.io/github/actions/workflow/status/your-github-username/mypackage/build.yml?branch=main)](https://github.com/your-github-username/mypackage/actions?query=branch%3amain)
 [![Coveralls branch](https://img.shields.io/coverallsCoverage/github/your-github-username/mypackage?branch=main)](https://coveralls.io/github/your-github-username/mypackage?branch=main)
 [![](https://img.shields.io/github/release/your-github-username/mypackage.svg?label=latest%20release&color=007edf)](https://github.com/your-github-username/mypackage/releases/latest)
@@ -23,13 +24,15 @@
 [![GitHub last commit](https://img.shields.io/github/last-commit/your-github-username/mypackage)](https://github.com/your-github-username/mypackage)
 [![GitHub commit activity](https://img.shields.io/github/commit-activity/m/your-github-username/mypackage)](https://github.com/your-github-username/mypackage/graphs/commit-activity)
 [![open issues](https://img.shields.io/github/issues/your-github-username/mypackage)](https://github.com/your-github-username/mypackage/issues)
+{{~ end ~}}
+![Static Badge](https://img.shields.io/badge/4.7%2C_8.0%2C_netstandard2.0%2C_netstandard2.1-dummy?label=dotnet&color=%235027d5)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](https://makeapullrequest.com)
 ![](https://img.shields.io/badge/release%20strategy-githubflow-orange.svg)
-![Static Badge](https://img.shields.io/badge/4.7%2C_6.0%2C_netstandard2.0%2C_netstandard2.1-dummy?label=dotnet&color=%235027d5)
 
 <a href="#about">About</a> •
 <a href="#how-to-use-it">How To Use</a> •
 <a href="#download">Download</a> •
+<a href="#building">Building</a> •
 <a href="#contributing">Contributing</a> •
 <a href="#versioning">Versioning</a> •
 <a href="#credits">Credits</a> •
@@ -77,7 +80,13 @@ Some example code showing your library
 This library is available as [a NuGet package](https://www.nuget.org/packages/mypackage) on https://nuget.org. To install it, use the following command-line:
 
   `dotnet add package mypackage`
-{{ else }}
+
+{{~ else if azdo ~}}
+This library is available as [a NuGet package] on https://dev.azure.com/MyOrganization/MyPackage/_artifacts. To install it, use the following command-line:
+
+`dotnet add package Fnv.IntegrationPlatform.Crm`
+
+{{~ else ~}}
 This library can be installed by adding the GitHub Packages feed to your package manager:
 
  {%{ `dotnet nuget add source --username USERNAME --password ${{ secrets.GITHUB_TOKEN }} --store-password-in-clear-text --name github "https://nuget.pkg.github.com/NAMESPACE/index.json"` }%}
@@ -92,7 +101,7 @@ Then, install the package using the following command-line:
 ## Building
 
 To build this repository locally, you need the following:
-* The [.NET SDKs](https://dotnet.microsoft.com/en-us/download/visual-studio-sdks) for .NET 4.7, 6.0 and 8.0.
+* The [.NET SDKs](https://dotnet.microsoft.com/en-us/download/visual-studio-sdks) for .NET 4.7 and 8.0.
 * Visual Studio, JetBrains Rider or Visual Studio Code with the C# DevKit
 
 You can also build, run the unit tests and package the code using the following command-line:
@@ -109,8 +118,8 @@ Also try using `--help` to see all the available options or `--plan` to see what
 ## Contributing
 
 Your contributions are always welcome! Please have a look at the [contribution guidelines](CONTRIBUTING.md) first.
-{{~ if open_source ~}}
 
+{{~ if open_source ~}}
 Previous contributors include:
 
 <a href="https://github.com/your-github-username/mypackage/graphs/contributors">

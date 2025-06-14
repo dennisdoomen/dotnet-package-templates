@@ -6,7 +6,8 @@ However, to improve that collaboration this document presents a few steps to smo
 
 ## Finding Existing Issues
 
-Before filing a new issue, please search our [issues](https://github.com/yourname/yourrepo/issues) to check if it already exists.
+Before filing a new issue, please search our [issues](
+{{- if azdo -}}https://github.com/yourname/yourrepo/issues{{- else -}}https://dev.azure.com/MyOrganization/MyProject/_workitems/{{- end -}}) to check if it already exists.
 
 If you do find an existing issue, please include your own feedback in the discussion.
 Instead of posting "me too", upvote the issue with 👍, as this better helps us prioritize popular issues and avoids spamming people subscribing to the issue.
@@ -23,7 +24,9 @@ Ideally, a bug report should contain the following information:
 * Information on the environment: nuget version, .NET version, etc.
 * Additional information, e.g. is it a regression from previous versions? are there any known workarounds?
 
+{{~ if azdo ~}}
 When ready to submit a bug report, please use the [Bug Report issue template](https://github.com/your-user-name/my-package/issues/new?labels=&template=01_bug_report.yml).
+{{~ end ~}}
 
 #### Why are Minimal Reproductions Important?
 
@@ -51,7 +54,9 @@ Also we balance whether proposed features are too niche or complex to pull their
 A feature proposal so to speak starts at [-100 points](https://web.archive.org/web/20200112182339/https://blogs.msdn.microsoft.com/ericgu/2004/01/12/minus-100-points/) and needs to prove its worth.
 Remember that a rejection of an API approval is not necessarily a rejection of your idea, but merely a rejection of including it in the core library.
 
+{{~ if azdo ~}}
 When ready to submit a proposal, please use the [API Suggestion issue template](https://github.com/your-user-name/my-package/issues/new?labels=api-suggestion&template=02_api_proposal.yml&title=%5BAPI+Proposal%5D%3A+).
+{{~ end ~}}
 
 Contributions must also satisfy the other published guidelines defined in this document.
 
@@ -59,7 +64,11 @@ Contributions must also satisfy the other published guidelines defined in this d
 
 Please do:
 
-* Target the [Pull Request](https://help.github.com/articles/using-pull-requests) at the `develop` branch.
+{{~ if azdo ~}}
+* Target the [Pull Request](https://docs.microsoft.com/en-us/azure/devops/repos/git/pull-requests?view=azure-devops) at the `main` branch.
+{{~ else ~}}
+* Target the [Pull Request](https://help.github.com/articles/using-pull-requests) at the `main` branch.
+{{~ end ~}}
 * Follow the style presented in the [Coding Guidelines for C#](https://csharpcodingguidelines.com/).
 * Ensure that changes are covered by a new or existing set of unit tests which follow the Arrange-Act-Assert syntax.
 * Also the code coverage reported by the coveralls must be non-decreasing unless accepted by the authors.

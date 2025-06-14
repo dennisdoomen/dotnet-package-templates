@@ -1,6 +1,10 @@
-﻿{{- if !source_only -}}
+﻿{{~ if !source_only ~}}
+{{~ if azdo ~}}
+[assembly: System.Reflection.AssemblyMetadata("RepositoryUrl", "https://dev.azure.com/MyOrganization/MyProject/_git/MyPackage")]
+{{~ else ~}}
 [assembly: System.Reflection.AssemblyMetadata("RepositoryUrl", "https://github.com/your-user-name/my-package")]
-{{ end -}}
+{{~ end ~}}
+{{~ end ~}}
 [assembly: System.Runtime.CompilerServices.InternalsVisibleTo("MyPackage.Specs")]
 namespace MyPackage
 {
