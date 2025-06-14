@@ -26,7 +26,11 @@
       A nice description of your package as you want to see it on NuGet.
     </PackageDescription>
     <PackageProjectUrl>https://url-to-your-landing-page</PackageProjectUrl>
+      {{~ if azdo ~}}
+    <RepositoryUrl>https://dev.azure.com/MyOrganization/MyProject/_git/MyPackage</RepositoryUrl>
+      {{~ else ~}}
     <RepositoryUrl>https://github.com/your-user-name/my-package</RepositoryUrl>
+      {{~ end ~}}
     <RepositoryType>git</RepositoryType>
     <PackageTags>some;tags;you;like</PackageTags>
     {{~ if open_source ~}}
@@ -34,7 +38,9 @@
     {{~ end ~}}
     <PackageIcon>PackageIcon.png</PackageIcon>
     <PackageReadmeFile>Readme.md</PackageReadmeFile>
+    {{~ if !azdo ~}}
     <PackageReleaseNotes>https://github.com/your-user-name/my-package/releases</PackageReleaseNotes>
+    {{~ end ~}}
     <Copyright>Copyright 2025-$([System.DateTime]::Now.ToString(yyyy)) Your Name</Copyright>
   </PropertyGroup>
 {{ end ~}}

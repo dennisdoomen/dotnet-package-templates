@@ -1,11 +1,18 @@
+using System;
+using System.Linq;
 using Nuke.Common.IO;
 using Scriban;
 using Serilog;
 
 internal static class TemplateExtensions
 {
-    public static void RenderToFileIfNotEmpty(this Template template, AbsolutePath targetPath, object model)
+    public static void RenderToFileIfNotEmpty(this Template template, AbsolutePath targetPath, object model, params string[] foldersToExclude)
     {
+        if (foldersToExclude.Any(f => targetPath.ToString().Contains(f, StringComparison.OrdinalIgnoreCase)))
+        {
+            return;
+        }
+
         targetPath.Parent.CreateDirectory();
 
         string content = template.Render(model);

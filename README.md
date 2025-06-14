@@ -41,6 +41,7 @@ A bunch of `dotnet new` templates to quickly get you started building high-quali
 It includes:
 * Multi-targeting to cover as many .NET frameworks as possible
 * Separate templates for internal (or "inner sourced") as well as open-source libraries
+* Support for both GitHub and Azure DevOps Repositories/Pipelines
 * Can create projects for binary or source-only packages
 * Code coverage using [Coverlet](https://github.com/coverlet-coverage/coverlet) and [Coveralls.io](https://coveralls.io/)
 * Static code analysis using Roslyn analyzers [StyleCopAnalyzers](https://github.com/DotNetAnalyzers/StyleCopAnalyzers), [Roslynator](https://github.com/dotnet/roslynator), [CSharpGuidelinesAnalyzer](https://github.com/bkoelman/CSharpGuidelinesAnalyzer) and [Meziantou](https://github.com/meziantou/Meziantou.Framework).
@@ -85,19 +86,25 @@ You can update the templates using the following command.
 ### Generating the library skeleton
 
 1. Create a new directory for your library initialized with Git
-1. Run the following command to start building an internal library
+1. Run the following command to start building an internal library for GitHub
 
     `dotnet new nooss-binary-nuget-class-library-sln --name TheNameOfYourAwesomeLibrary`
 
-   Or, if you prefer to build a NuGet package that only adds source files to a project (and avoids binary dependencies)
+    Or, if you prefer to build a NuGet package that only adds source files to a project (and avoids binary dependencies)
 
-   `dotnet new nooss-source-only-nuget-class-library-sln --name TheNameOfYourAwesomeLibrary`
+    `dotnet new nooss-source-only-nuget-class-library-sln --name TheNameOfYourAwesomeLibrary`
 
-   Or, if you want to build an open-source packages, use either of the following
+    Or, if you want to build an open-source packages, use either of the following
 
-   `dotnet new oss-binary-nuget-class-library-sln --name TheNameOfYourAwesomeLibrary`
+    `dotnet new oss-binary-nuget-class-library-sln --name TheNameOfYourAwesomeLibrary`
 
-   `dotnet new oss-source-only-nuget-class-library-sln --name TheNameOfYourAwesomeLibrary`
+    `dotnet new oss-source-only-nuget-class-library-sln --name TheNameOfYourAwesomeLibrary`
+
+    If you are still using Azure DevOps, we got you covered, but you need the organization and project names as well. Again, choose between a binary package or a source-only package.
+
+    `dotnet new azdo-binary-nuget-class-library-sln --name TheNameOfYourAwesomeLibrary --organization MyDevOpsOrganization --project MyDevOpsProject` 
+
+    `dotnet new azdo-source-only-nuget-class-library-sln --name TheNameOfYourAwesomeLibrary --organization MyDevOpsOrganization --project MyDevOpsProject`
 
 1. Make the necessary changes to the generated code (see next section)
 1. Commit the changes to your repository into a new commit. Without it, the build script will crash on generating the version number.
