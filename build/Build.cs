@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using Nuke.Common;
+using Nuke.Common.CI.AzurePipelines.Configuration;
 using Nuke.Common.CI.GitHubActions;
 using Nuke.Common.IO;
 using Nuke.Common.ProjectModel;
@@ -68,7 +69,6 @@ class Build : NukeBuild
     Target PrepareTemplates => _ => _
         .Executes(() =>
         {
-            (ArtifactsDirectory / "templates").CreateOrCleanDirectory();
             AbsolutePath templateSource = RootDirectory / "templates" / "Source";
 
             foreach (AbsolutePath file in templateSource.GlobFiles("**/*"))
@@ -80,29 +80,35 @@ class Build : NukeBuild
 
                 var template = Template.Parse(content, file);
 
-                template.RenderToFileIfNotEmpty(ArtifactsDirectory / "templates" / "Normal" / relativePathTo, new
+                AbsolutePath templateDirectory = ArtifactsDirectory / "templates";
+                template.RenderToFileIfNotEmpty(templateDirectory / "Normal" / relativePathTo, new {});
+
+                template.RenderToFileIfNotEmpty(templateDirectory / "SourceOnly" / relativePathTo, new
                 {
-                    SourceOnly = false,
-                    OpenSource = false,
+                    SourceOnly = true
                 });
 
-                template.RenderToFileIfNotEmpty(ArtifactsDirectory / "templates" / "SourceOnly" / relativePathTo, new
+                template.RenderToFileIfNotEmpty(templateDirectory / "NormalOss" / relativePathTo, new
+                {
+                    OpenSource = true
+                });
+
+                template.RenderToFileIfNotEmpty(templateDirectory / "SourceOnlyOss" / relativePathTo, new
                 {
                     SourceOnly = true,
-                    OpenSource = false,
+                    OpenSource = true
                 });
 
-                template.RenderToFileIfNotEmpty(ArtifactsDirectory / "templates" / "NormalOss" / relativePathTo, new
+                template.RenderToFileIfNotEmpty(templateDirectory / "NormalAzdo" / relativePathTo, new
                 {
-                    SourceOnly = false,
-                    OpenSource = true,
-                });
+                    Azdo = true
+                }, [".github"]);
 
-                template.RenderToFileIfNotEmpty(ArtifactsDirectory / "templates" / "SourceOnlyOss" / relativePathTo, new
+                template.RenderToFileIfNotEmpty(templateDirectory / "SourceOnlyAzdo" / relativePathTo, new
                 {
                     SourceOnly = true,
-                    OpenSource = true,
-                });
+                    Azdo = true
+                }, [".github"]);
             }
         });
 
@@ -118,7 +124,7 @@ class Build : NukeBuild
                 PackageReadme = true,
             });
 
-            string[] names = ["Normal", "SourceOnly", "NormalOss", "SourceOnlyOss"];
+            string[] names = ["Normal", "SourceOnly", "NormalOss", "SourceOnlyOss", "NormalAzdo", "SourceOnlyAzdo"];
             foreach (string name in names)
             {
                 (ArtifactsDirectory / "templates" / name / "PackageReadme.md").WriteAllText(readmeContents);
@@ -129,7 +135,7 @@ class Build : NukeBuild
         .DependsOn(PrepareTemplateReadmes)
         .Executes(() =>
         {
-            string[] names = ["Normal", "SourceOnly", "NormalOss", "SourceOnlyOss"];
+            string[] names = ["Normal", "SourceOnly", "NormalOss", "SourceOnlyOss", "NormalAzdo", "SourceOnlyAzdo"];
             foreach (string name in names)
             {
                 var templateDirectory = ArtifactsDirectory / "templates" / name;

@@ -32,7 +32,7 @@ class Build : NukeBuild
 
     string BuildNumber => GitHubActions?.RunNumber.ToString();
 
-    [Parameter("The key to push to Nuget")]
+    [Parameter("The key to push the NuGet package")]
     [Secret]
     readonly string NuGetApiKey;
 
@@ -140,7 +140,7 @@ class Build : NukeBuild
             PackageGuard($"--configpath={RootDirectory / "PackageGuard.config.json"} {RootDirectory}");
         });
 
-    Target CodeCoverage => _ => _
+    Target GenerateCodeCoverageReport => _ => _
         .DependsOn(RunTests)
         .Executes(() =>
         {
@@ -158,7 +158,7 @@ class Build : NukeBuild
         .DependsOn(ScanPackages)
         .DependsOn(CalculateNugetVersion)
         .DependsOn(ApiChecks)
-        .DependsOn(CodeCoverage)
+        .DependsOn(GenerateCodeCoverageReport)
         .Executes(() =>
         {
             ReportSummary(s => s
@@ -176,7 +176,28 @@ class Build : NukeBuild
                 .SetVersion(SemVer));
         });
 
+{{~ if azdo ~}}
+    Target UploadPackageAsPipelineArtifact => _ => _
+        .OnlyWhenStatic(() => Host is AzurePipelines)
+        .OnlyWhenStatic(() => IsServerBuild)
+        .DependsOn(Pack)
+        .Executes(() =>
+        {
+            AbsolutePath packageFile = ArtifactsDirectory.GlobFiles("*.nupkg")
+                .SingleOrError("Expected exactly one file to be found, found none or multiple files");
+
+            Information($"Uploading artifact ${packageFile!.Name} to Azure Pipelines");
+
+            AzurePipelines.Instance.UploadArtifacts("drop", "package", packageFile!);
+        });
+{{~ end ~}}
+
     Target Push => _ => _
+{{~ if azdo ~}}
+        .OnlyWhenStatic(() => IsServerBuild)
+        .OnlyWhenStatic(() => !IsPullRequest)
+        .DependsOn(UploadPackageAsPipelineArtifact)
+{{~ end ~}}
         .DependsOn(Pack)
         .OnlyWhenDynamic(() => IsTag)
         .ProceedAfterFailure()
@@ -196,6 +217,10 @@ class Build : NukeBuild
         });
 
     Target Default => _ => _
+		.DependsOn(Pack)
+{{~ if azdo ~}}
+		.DependsOn(UploadPackageAsPipelineArtifact)
+{{~ end ~}}
         .DependsOn(Push);
 
     bool IsPullRequest => GitHubActions?.IsPullRequest ?? false;

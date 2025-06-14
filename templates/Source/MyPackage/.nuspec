@@ -12,7 +12,11 @@
     <license type="expression">MIT</license>
     <icon>PackageIcon.png</icon>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    {{~ if azdo ~}}
+    <projectUrl>https://dev.azure.com/MyOrganization/MyProject/_git/MyPackage</projectUrl>
+    {{~ else ~}}
     <projectUrl>https://github.com/your-user-name/my-package</projectUrl>
+    {{~ end ~}}
     <description>A nice description of your package as you want to see it on NuGet.</description>
     <tags>your tags</tags>
     <copyright>Copyright 2025 Your Name</copyright>

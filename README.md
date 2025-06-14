@@ -41,6 +41,7 @@ A bunch of `dotnet new` templates to quickly get you started building high-quali
 It includes:
 * Multi-targeting to cover as many .NET frameworks as possible
 * Separate templates for internal (or "inner sourced") as well as open-source libraries
+* Support for both GitHub and Azure DevOps Repositories/Pipelines
 * Can create projects for binary or source-only packages
 * Code coverage using [Coverlet](https://github.com/coverlet-coverage/coverlet) and [Coveralls.io](https://coveralls.io/)
 * Static code analysis using Roslyn analyzers [StyleCopAnalyzers](https://github.com/DotNetAnalyzers/StyleCopAnalyzers), [Roslynator](https://github.com/dotnet/roslynator), [CSharpGuidelinesAnalyzer](https://github.com/bkoelman/CSharpGuidelinesAnalyzer) and [Meziantou](https://github.com/meziantou/Meziantou.Framework).

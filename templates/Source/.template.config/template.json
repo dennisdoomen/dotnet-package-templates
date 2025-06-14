@@ -16,25 +16,52 @@
         ]
       }
     ],
-{{~ if !source_only && !opensource ~}}
+{{~ if azdo ~}}
+    "symbols": {
+      "organization": {
+        "type": "parameter",
+        "dataType": "string",
+        "defaultValue": "MyOrganization",
+        "description": "The Azure DevOps organization, e.g. MyOrganization",
+        "replaces": "MyOrganization",
+        "isRequired": true
+      },
+      "project": {
+        "type": "parameter",
+        "dataType": "string",
+        "defaultValue": "MyProject",
+        "description": "The Azure DevOps project name, e.g. MyProject",
+        "replaces": "MyProject",
+        "isRequired": true
+      }
+    },
+{{~ end ~}}
+{{~ if !source_only && azdo ~}}
+    "identity": "DeDo.AzdoBinaryLibrary.Template",
+    "name": "Class Library Binary NuGet Azure DevOps Solution",
+    "description": "Binary multi-targeting library with all the bells and whistles for Inner Sourcing on Azure DevOps",
+    "shortName": "azdo-binary-nuget-class-library-sln"
+{{~ else if source_only && azdo ~}}
+    "identity": "DeDo.AzdoSourceOnlyLibrary.Template",
+    "name": "Class Library Source-Only NuGet Azure DevOps  Solution",
+    "description": "Source-only multi-targeting library with all the bells and whistles for Inner Sourcing on Azure DevOps",
+    "shortName": "azdo-source-only-nuget-class-library-sln"
+{{~ else if !source_only && !opensource ~}}
     "identity": "DeDo.NonOssBinaryLibrary.Template",
     "name": "Class Library Binary NuGet Non-OSS Solution",
     "description": "NuGet-published binary multi-targeting library with all the bells and whistles for Inner Sourcing",
     "shortName": "nooss-binary-nuget-class-library-sln"
-{{ end ~}}
-{{~ if source_only && !opensource ~}}
+{{~ else if source_only && !opensource ~}}
     "identity": "DeDo.NonOssSourceOnlyLibrary.Template",
     "name": "Class Library Source-Only NuGet Non-OSS  Solution",
     "description": "NuGet-published source-only multi-targeting library with all the bells and whistles for Inner Sourcing",
     "shortName": "nooss-source-only-nuget-class-library-sln"
-{{ end ~}}
-{{~ if !source_only && opensource ~}}
+{{~ else if !source_only && opensource ~}}
     "identity": "DeDo.OssBinaryLibrary.Template",
     "name": "Class Library Binary NuGet OSS Solution",
     "description": "NuGet-published binary multi-targeting OSS library with all the bells and whistles",
     "shortName": "oss-binary-nuget-class-library-sln"
-{{ end ~}}
-{{~ if source_only && opensource ~}}
+{{~ else if source_only && opensource ~}}
     "identity": "DeDo.NonOssBinaryLibrary.Template",
     "name": "Class Library Source-Only NuGet OSS Solution",
     "description": "NuGet-published source-only multi-targeting OSS library with all the bells and whistles",
