@@ -45,7 +45,7 @@ It includes:
 * Can create projects for binary or source-only packages
 * Code coverage using [Coverlet](https://github.com/coverlet-coverage/coverlet) and [Coveralls.io](https://coveralls.io/)
 * Static code analysis using Roslyn analyzers [StyleCopAnalyzers](https://github.com/DotNetAnalyzers/StyleCopAnalyzers), [Roslynator](https://github.com/dotnet/roslynator), [CSharpGuidelinesAnalyzer](https://github.com/bkoelman/CSharpGuidelinesAnalyzer) and [Meziantou](https://github.com/meziantou/Meziantou.Framework).
-* Auto-formatting using `.editorconfig` and settings honored by [JetBrains Rider](https://www.jetbrains.com/rider/) and [ReSharper](https://www.jetbrains.com/resharper/)
+* Auto-formatting using (a slightly opinionated) `.editorconfig` and settings honored by [JetBrains Rider](https://www.jetbrains.com/rider/) and [ReSharper](https://www.jetbrains.com/resharper/)
 * A [Nuke](https://nuke.build/) C# build script that you can run locally as well as in your CI/CD pipeline
 * A GitHub Actions workflow that builds, tests, packages and publishes your library
 * GitHub issue templates to streamline bug reporting and feature requests
