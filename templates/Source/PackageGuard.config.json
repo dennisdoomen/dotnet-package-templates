@@ -8,7 +8,9 @@
                 "BSD-2-Clause"
             ],
             "Packages": [
+{{~ if open_source ~}}
                 "FluentAssertions",
+{{~ end ~}}
                 "NETStandard.Library"
             ]
         }
